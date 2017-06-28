@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
  
-var matching_route = require('./matching');
-router.use('/matching', matching_route);
+var pricing_route = require('./pricing');
+router.use('/pricing', pricing_route);
  
 //API start
 router.get('/', function(req, res) {

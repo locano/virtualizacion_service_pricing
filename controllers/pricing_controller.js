@@ -1,7 +1,7 @@
 var mysql = require('mysql');
 
 module.exports = {
-    getAdvertisers(req, res){
+    getPricing(req, res){
         var connection = mysql.createConnection({
             host: 'zyklusdb.ciohag68m4xh.us-east-2.rds.amazonaws.com',
             user: 'zykladmin',
@@ -18,14 +18,29 @@ module.exports = {
             }
         });
         
-        var query = "CALL get_active_campaigns(?)";
+      /*  var query = "CALL get_active_campaigns(?)";
         var params = [
             req.params['campaign']
+        ];*/
+
+
+        var id_result = "SELECT id, commission FROM publisher_campaigns WHERE publisher_id = ?  limit 1";
+        var params = [
+            req.query['publisher_campaign']
         ];
 
-        connection.query(query, params, function(error, results, fields) {
+        var advertiser_campaign = req.query["advertiser_campaigns"].split(',');
+        var bids = req.query["advertiser_campaigns_bids"].split(',');
+        var publisher_campaign = req.query["publisher_campaign"];
+
+    connection.query(id_result, params, function(error, results, fields) {  
             //Close connection
             connection.end();
+
+            console.log(id_result);
+            console.log(params);
+            console.log(bids);
+            console.log(results);
 
             //Internal server error, return 500
             if (error) {
@@ -37,11 +52,19 @@ module.exports = {
             if(results[0].length == 0){
                 console.log('ERROR - No records found');
                 res.status(400).send({message: 'ERROR - No records found'});
-            }
-            
+            }else{
             //Found records
-            console.log('OK - Successful query: "' + query + '" with results: ' + results[0]);
-            res.status(200).send(results[0]);
+           console.log(results);
+                            var lista_objeto = [];
+                            for (var i = 0; i < bids.length; i++) {
+                                lista_objeto[i] = {
+                                    'id': advertiser_campaign[i], 
+                                    'prize': bids[i] * results[0].commission
+                                };
+                            }
+                            res.status(200).send({result:list});
+        }
+        
         }); 
     }
 };

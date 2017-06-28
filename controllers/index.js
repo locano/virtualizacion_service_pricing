@@ -1,5 +1,5 @@
-const matching_controller = require('./matching_controller');
+const pricing_controller = require('./pricing_controller');
 
 module.exports = {
-    matching_controller
+    pricing_controller
 }
